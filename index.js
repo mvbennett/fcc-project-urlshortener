@@ -3,8 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
-// const multer = require('multer');
-// const upload = multer();
+const db = require('./db')
 
 // Basic Configuration
 const port = process.env.PORT || 3000;
