@@ -30,14 +30,9 @@ app.get('/api/hello', function(req, res) {
 app.post('/api/shorturl', (req, res, next) => {
   let url = req.body['url'];
 
-  let urlModel = new Url({original_url: url});
-
-  urlModel.save((err, data) => {
-    if (err) return console.log(err);
-
-
+  shortenUrl(url, (data) => {
     next(res.json({original_url: data['original_url'], short_url: data['short_url']}));
-  })
+  });
 });
 
 app.listen(port, function() {
