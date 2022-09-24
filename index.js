@@ -30,9 +30,10 @@ app.get('/api/hello', function(req, res) {
 
 app.post('/api/shorturl', (req, res, next) => {
   let url = req.body['url'];
-  let domain;
+  let fullDomain;
   if (url.match(/^https*:\/\//i)) {
-    domain = url.replace(/^https*:\/\//i, '');
+    fullDomain = url.replace(/^https*:\/\//i, '');
+    let domain = fullDomain.replace(/\/.*/i, '');
 
     dns.lookup(domain, (err) => {
       if (err !== null) {
