@@ -4,6 +4,7 @@ const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose')
+const dns = require('dns');
 const db = require('./db.js');
 const Url = require('./db.js').UrlModel;
 const shortenUrl = require('./db.js').shortenUrl;
@@ -29,10 +30,16 @@ app.get('/api/hello', function(req, res) {
 
 app.post('/api/shorturl', (req, res, next) => {
   let url = req.body['url'];
-
-  shortenUrl(url, (data) => {
-    next(res.json({original_url: data['original_url'], short_url: data['short_url']}));
+  dns.lookup(url, (err) => {
+    if (err !== null) {
+      return next(res.json({error: err}))
+    } else {
+      shortenUrl(url, (data) => {
+        next(res.json({original_url: data['original_url'], short_url: data['short_url']}));
+      });
+    }
   });
+
 });
 
 app.listen(port, function() {
