@@ -5,21 +5,55 @@ mongoose.connect(process.env['MONGO_URI'], { useNewUrlParser: true, useUnifiedTo
 
 const Schema = mongoose.Schema;
 
-const testSchema = new Schema({
-  name: {type: String, required: true},
-  number: {type: Number}
+const urlSchema = new Schema({
+  original_url: {type: String, required: true},
+  short_url: Number
 });
 
-testSchema.plugin(AutoIncrement, {id: 'order-seq', inc_field: 'number'})
+urlSchema.plugin(AutoIncrement, {id: 'order-seq', inc_field: 'short_url'});
 
-const Test = mongoose.model('Test', testSchema);
+const Url = mongoose.model('Url', urlSchema);
 
-let test = new Test({name: 'f'});
+const shortenUrl = (url, done) => {
+  let targetUrl = new Url({original_url: url});
 
-test.save();
-console.log(test.number);
+  targetUrl.save((err, data) => {
+    if (err) return console.error(err);
 
-let test2 = new Test({name: 'h'});
+    done(data);
+  })
+}
 
-test2.save();
-console.log(test2.number);
+// shortenUrl('https://omg.com', data => console.log(data));
+
+// for first time tests of auto-increment
+// let testUrl1 = new Url({original_url: 'https://freecodecamp.com'});
+
+// let testUrl2 = new Url({original_url: 'https://coffeeguymike.com'});
+
+// let testUrl3 = new Url({original_url: 'https://google.com'});
+
+// testUrl1.save();
+// testUrl2.save();
+// testUrl3.save();
+
+// const testSchema = new Schema({
+//   name: {type: String, required: true},
+//   number: {type: Number}
+// });
+
+// testSchema.plugin(AutoIncrement, {id: 'order-seq', inc_field: 'number'})
+
+// const Test = mongoose.model('Test', testSchema);
+
+// let test = new Test({name: 'f'});
+
+// test.save();
+// console.log(test.number);
+
+// let test2 = new Test({name: 'h'});
+
+// test2.save();
+// console.log(test2.number);
+exports.shortenUrl = shortenUrl;
+exports.UrlModel = Url;
