@@ -38,9 +38,19 @@ app.post('/api/shorturl', (req, res, next) => {
       if (err !== null) {
         return next(res.json({error: 'Invalid Url'}))
       } else {
-        shortenUrl(url, (data) => {
-          next(res.json({original_url: data['original_url'], short_url: data['short_url']}));
-        });
+        Url.findOne({original_url: url}, (err, existingUrl) => {
+          if (err) return console.log(err);
+
+          if (existingUrl === null) {
+            shortenUrl(url, (data) => {
+              next(res.json({original_url: data['original_url'], short_url: data['short_url']}));
+            });
+          } else {
+            next(res.json({original_url: existingUrl['original_url'], short_url: existingUrl['short_url']}));
+          }
+        })
+
+
       }
     });
 
