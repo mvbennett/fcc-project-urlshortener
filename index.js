@@ -30,15 +30,23 @@ app.get('/api/hello', function(req, res) {
 
 app.post('/api/shorturl', (req, res, next) => {
   let url = req.body['url'];
-  dns.lookup(url, (err) => {
-    if (err !== null) {
-      return next(res.json({error: err}))
-    } else {
-      shortenUrl(url, (data) => {
-        next(res.json({original_url: data['original_url'], short_url: data['short_url']}));
-      });
-    }
-  });
+  let domain;
+  if (url.match(/^https*:\/\//i)) {
+    domain = url.replace(/^https*:\/\//i, '');
+
+    dns.lookup(domain, (err) => {
+      if (err !== null) {
+        return next(res.json({error: 'Invalid Url'}))
+      } else {
+        shortenUrl(url, (data) => {
+          next(res.json({original_url: data['original_url'], short_url: data['short_url']}));
+        });
+      }
+    });
+
+  } else {
+    next(res.json({error: 'Invalid Url'}));
+  }
 
 });
 
