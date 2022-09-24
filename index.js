@@ -3,8 +3,10 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
-// const multer = require('multer');
-// const upload = multer();
+const mongoose = require('mongoose')
+const db = require('./db.js');
+const Url = require('./db.js').UrlModel;
+const shortenUrl = require('./db.js').shortenUrl;
 
 // Basic Configuration
 const port = process.env.PORT || 3000;
@@ -26,8 +28,11 @@ app.get('/api/hello', function(req, res) {
 });
 
 app.post('/api/shorturl', (req, res, next) => {
-  res.json({original_url: req.body['url']});
-  next();
+  let url = req.body['url'];
+
+  shortenUrl(url, (data) => {
+    next(res.json({original_url: data['original_url'], short_url: data['short_url']}));
+  });
 });
 
 app.listen(port, function() {
