@@ -50,6 +50,14 @@ app.post('/api/shorturl', (req, res, next) => {
 
 });
 
+app.get('/api/shorturl/:id', (req, res, next) => {
+  let url = Url.findOne({short_url: parseInt(req.params.id)}, (err, url) => {
+    if (err) console.log(err);
+
+    res.redirect(url.original_url);
+  });
+})
+
 app.listen(port, function() {
   console.log(`Listening on port ${port}`);
 });
